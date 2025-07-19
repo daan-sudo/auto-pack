@@ -267,4 +267,5 @@ async function packHarmony() {
       console.log(`已将打包的文件重命名为: ${newFileName}`);
     }
   }
+  spinner.succeed(`鸿蒙版本${msxtType}打包完成!`);
 }
