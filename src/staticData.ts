@@ -26,3 +26,16 @@ export const msxtDataList: MsxtData[] = [
     type: "msxt_score_call_app",
   },
 ];
+
+export const packNameStart = [
+  "A80",
+  "B90",
+  "C80",
+  "D100",
+  "E80",
+  "F100",
+  "G80",
+  "H80",
+  "J80",
+  "K80",
+];

@@ -6,12 +6,12 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "dev": "node dist/index.cjs",
+    "dev": "node dist/index.esm.js",
     "build": "rollup -c rollup.config.ts --configPlugin typescript",
     "predev": "npm run build"
   },
   "bin": {
-    "auto-pack": "dist/index.cjs"
+    "auto-pack": "dist/index.esm.js"
   },
   "keywords": [],
   "author": "",
@@ -31,10 +31,12 @@
   "dependencies": {
     "@rollup/plugin-json": "^6.1.0",
     "@types/inquirer": "^9.0.8",
-    "chalk": "^5.4.1",
+    "chalk": "^4.1.2",
     "commander": "^13.1.0",
+    "dayjs": "^1.11.13",
     "fs-extra": "^11.3.0",
     "inquirer": "^12.7.0",
+    "json5": "^2.2.3",
     "ora": "^8.2.0",
     "shelljs": "^0.10.0"
   }
