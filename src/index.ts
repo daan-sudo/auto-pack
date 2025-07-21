@@ -7,7 +7,7 @@ import fs from "fs-extra";
 const pkg = fs.readJSONSync(new URL("../package.json", import.meta.url));
 program
   .version(pkg.version, "-v", "--version") // 设置版本号
-  .description("用于快速搭建vue-vite项目cli工具");
+  .description("快速打包全流程工具");
 program
   .name("auto-pack") // 设置命令名称
   .description("面试系统全流程自动打包脚本")

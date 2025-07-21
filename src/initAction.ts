@@ -4,6 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import dayjs from "dayjs";
 import path from "path";
+import commentJson from "comment-json"; // 用于读取带有注释的json文件
 import shell from "shelljs";
 import JSON5 from "json5"; // 用于解析json5文件
 import ora from "ora"; // 用于显示加载动画
@@ -100,6 +101,7 @@ export default async function initAction() {
         packHarmony();
       } else {
         // todo...
+        await packWhatPlatform();
       }
     }
     fs.writeFileSync(
@@ -136,6 +138,7 @@ async function buildVue(vuePath: string) {
     }
     spinner.succeed(chalk.greenBright("vue工程打包成功!"));
     // 准备打包electron或者其他端
+    await packWhatPlatform();
   }
 }
 //
@@ -268,4 +271,70 @@ async function packHarmony() {
     }
   }
   spinner.succeed(`鸿蒙版本${msxtType}打包完成!`);
+  checkList.splice(checkList.indexOf("openHarmony"), 1); // 打包完成后移除鸿蒙端
+  if (checkList.length > 0) {
+    await buildVue(vuePath); // 如果还有其他端需要打包, 继续打包vue工程
+  } else {
+    spinner.succeed(`所有平台打包完成!`);
+  }
+}
+async function packPc() {
+  // ..todo 打包electron
+  const spinner = ora("正在打包客户端...").start();
+  spinner.succeed(`${msxtType}客户端打包完成!`);
+  checkList.splice(checkList.indexOf("pc"), 1);
+  if (checkList.length > 0) {
+    if (checkList.includes("android")) {
+      await packAndroid();
+    }
+  } else {
+    spinner.succeed(`所有平台打包完成!`);
+  }
+}
+// 用uniapp打包android
+async function packAndroid() {
+  // const configPath = new URL("../config.json", import.meta.url);
+  const configPath = path.join(vuePath, "pack", "config.json");
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`${configPath} 不存在，请添加config.json文件`);
+  }
+  const configJson = fs.readJSONSync(configPath);
+  configJson.project = `${vuePath}/pack`;
+  fs.writeJSONSync(configPath, configJson);
+  // 修改mainfest.json
+  const manifestPath = path.join(vuePath, "pack", "manifest.json");
+  const mainFestObj = fs.readFileSync(
+    new URL(manifestPath, import.meta.url),
+    "utf-8"
+  );
+  const mainFestJson = commentJson.parse(mainFestObj);
+  //@ts-ignore
+  mainFestJson.version.name = version; // 设置版本号
+  //@ts-ignore
+  mainFestJson.version.code = buildNumber;
+  fs.writeFileSync(
+    new URL(manifestPath, import.meta.url),
+    commentJson.stringify(mainFestJson, null, 2)
+  );
+  shell.cd(`${vuePath}/pack`);
+  console.log(
+    `cli pack --config ${configPath}`,
+    "cli pack --config ${configPath}"
+  );
+  // console.log(configPath, configJson2, "哈哈哈", configPath.pathname);
+  const buildResult = shell.exec(`cli pack --config ${configPath}`);
+  const spinner = ora("准备打包android...").start();
+  if (buildResult.code !== 0) {
+    spinner.fail(chalk.redBright("android打包失败!"));
+    throw new Error("android打包失败，请检查错误信息");
+  }
+}
+
+// 判断下一步打包哪个平台
+async function packWhatPlatform() {
+  if (checkList.includes("pc")) {
+    await packPc();
+  } else if (checkList.includes("android")) {
+    await packAndroid();
+  }
 }

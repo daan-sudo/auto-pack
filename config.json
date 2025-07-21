@@ -1,0 +1,20 @@
+{
+  "project": "/Users/panqingfeng/work/UBO/msxt_examiner_app/pack",
+  "platform": "android",
+  "iscustom": false,
+  "safemode": false,
+  "android": {
+    "packagename": "keyee.msxt.examiner",
+    "androidpacktype": "3",
+    "certalias": "",
+    "certfile": "",
+    "certpassword": "",
+    "storePassword": "",
+    "channels": ""
+  },
+  "isconfusion": false,
+  "splashads": false,
+  "rpads": false,
+  "pushads": false,
+  "exchange": false
+}
